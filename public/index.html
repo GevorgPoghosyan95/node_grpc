@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Private Chat Room</title>
+</head>
+<body>
+<h1>Welcome to the Private Chat Room</h1>
+<label>Enter room name: </label>
+<input type="text" id="roomName" />
+<button onclick="joinRoom()">Join Room</button>
+<hr />
+<div id="chatBox"></div>
+<input type="text" id="message" />
+<button onclick="sendMessage()">Send Message</button>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+
+    function joinRoom() {
+        const room = document.getElementById('roomName').value;
+        socket.emit('joinRoom', room);
+    }
+
+    function sendMessage() {
+        const message = document.getElementById('message').value;
+        const room = document.getElementById('roomName').value;
+        socket.emit('privateMessage', { room, message });
+        document.getElementById('message').value = '';
+    }
+
+    socket.on('privateMessage', (message) => {
+        const chatBox = document.getElementById('chatBox');
+        const newMessage = document.createElement('p');
+        newMessage.textContent = message;
+        chatBox.appendChild(newMessage);
+    });
+</script>
+</body>
+</html>
